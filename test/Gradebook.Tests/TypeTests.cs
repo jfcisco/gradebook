@@ -3,8 +3,24 @@ using Xunit;
 
 namespace GradeBook.Tests
 {
+    public delegate string WriteLogMessage(string message);
     public class TypeTests
     {
+        [Fact]
+        public void CanInvokeMethodsFromDelegate()
+        {
+            WriteLogMessage log;
+            log = WriteMessage;
+
+            var result = log("Delegate called");
+            Assert.Equal("Message written! Delegate called", result);
+        }
+
+        private string WriteMessage(string message)
+        {
+            return $"Message written! {message}";
+        }
+
         [Fact]
         public void ValueTypesAlsoPassByValue()
         {
