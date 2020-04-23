@@ -3,17 +3,35 @@ using System.Collections.Generic;
 
 namespace GradeBook
 {
-    public class Book
+    public class NamedObject
     {
-        public Book(string name)
+        public NamedObject(string name)
         {
-            grades = new List<double>();
-            this.Name = name;
+            Name = name;
         }
+
+        public string Name
+        {
+            get;
+            set;
+        }
+    }
+    public class Book : NamedObject
+    {
+        public Book(string name) : base(name)
+        {
+            grades = new List<double>();        }
 
         public void AddGrade(double grade)
         {
-            grades.Add(grade);
+            if (grade <= 100 && grade >= 0)
+            {
+                grades.Add(grade);                
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid {nameof(grade)}");
+            }            
         }
 
         double ComputeAverage()
@@ -34,6 +52,7 @@ namespace GradeBook
             result.Average = ComputeAverage();
             result.High = GetHighestGrade();
             result.Low = GetLowestGrade();
+            result.Letter = GetLetterGrade(result.Average);
 
             return result;
         }
@@ -62,14 +81,36 @@ namespace GradeBook
             return highestGrade;
         }
 
+        public char GetLetterGrade(double grade)
+        {
+            switch (grade)
+            {
+                case var g when g >= 90:
+                    return 'A';
+                
+                case var g when g >= 80:
+                    return 'B';
+
+                case var g when g >= 70:
+                    return 'C';
+                
+                case var g when g >= 60:
+                    return 'D';
+                
+                default:
+                    return 'F';
+            }
+        }
+
         public void ShowStatistics()
         {
-            Console.WriteLine($"The average grade is {ComputeAverage()}");
-            Console.WriteLine($"The lowest grade is {GetLowestGrade()}");
-            Console.WriteLine($"The highest grade is {GetHighestGrade()}");
+            var result = GetStatistics();
+            Console.WriteLine($"The average grade is {result.Average:N2}");
+            Console.WriteLine($"The lowest grade is {result.Low}");
+            Console.WriteLine($"The highest grade is {result.High}");
+            Console.WriteLine($"The letter grade is {result.Letter}");
         } 
 
         List<double> grades;
-        public string Name;
     }
 }
